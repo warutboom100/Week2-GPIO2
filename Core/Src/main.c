@@ -108,7 +108,6 @@ int main(void)
 
     /* USER CODE BEGIN 3 */
 	ButtonMatrixUpdate();
-	CheckIDStudent();
 
 
   }
@@ -214,13 +213,10 @@ static void MX_GPIO_Init(void)
   HAL_GPIO_WritePin(GPIOA, GPIO_PIN_7|GPIO_PIN_9, GPIO_PIN_SET);
 
   /*Configure GPIO pin Output Level */
-  HAL_GPIO_WritePin(GPIOB, GPIO_PIN_10, GPIO_PIN_RESET);
+  HAL_GPIO_WritePin(GPIOB, GPIO_PIN_10|GPIO_PIN_6, GPIO_PIN_SET);
 
   /*Configure GPIO pin Output Level */
   HAL_GPIO_WritePin(GPIOC, GPIO_PIN_7, GPIO_PIN_SET);
-
-  /*Configure GPIO pin Output Level */
-  HAL_GPIO_WritePin(GPIOB, GPIO_PIN_6, GPIO_PIN_SET);
 
   /*Configure GPIO pin : B1_Pin */
   GPIO_InitStruct.Pin = B1_Pin;
@@ -297,6 +293,27 @@ void ButtonMatrixUpdate()
 			GPIO_PinState Pinstate = HAL_GPIO_ReadPin(ButtonmatrixPort[i], ButtonMatrixPin[i]);
 			if(Pinstate == GPIO_PIN_RESET){ // Button Press
 				ButtonMatrixState |= (uint16_t)0x1 << (i + ButtonMatrixLine * 4);
+				for(int i=CountPress; i<CountPress+1;i++){
+					if(IdStudent[i]==ButtonMatrixState){
+						CountPress += 1;
+						Status += 1;
+						break;
+					}
+					if((IdStudent[i]!=ButtonMatrixState)||(ButtonMatrixState!=0)){
+						CountPress += 13;
+						break;
+					}
+				}
+				if(Status == 12&&ButtonMatrixState==32768){
+					HAL_GPIO_WritePin(GPIOB, GPIO_PIN_10, GPIO_PIN_RESET);
+					break;
+				}
+				if(ButtonMatrixState == 8){
+					Status = 1;
+					CountPress = 0;
+					HAL_GPIO_WritePin(GPIOB, GPIO_PIN_10, GPIO_PIN_SET);
+					break;
+				}
 			}
 			else{
 				ButtonMatrixState &= ~((uint16_t)0x1 << (i + ButtonMatrixLine * 4));
@@ -313,49 +330,7 @@ void ButtonMatrixUpdate()
 	}
 }
 
-void CheckIDStudent (){
-	if(Status == 12&&ButtonMatrixState == 32768){
-		HAL_GPIO_WritePin(GPIOB, GPIO_PIN_10, GPIO_PIN_SET);
-	}
-	if(6>CountPress||CountPress>8){
-		for(int i=CountPress; i<CountPress+1;i++){
-			if(IdStudent[i]==ButtonMatrixState){
-				CountPress += 1;
-				Status += 1;
-				break;
-			}
-			if((IdStudent[i]!=ButtonMatrixState)||(ButtonMatrixState!=0)){
-				CountPress += 13;
-				break;
-			}
-		}
-	}
-	if(CountPress == 6){
-		if(ButtonMatrixState==4096){
-			if(HAL_GetTick() - delay >= 1000){
-				CountPress +=1;
-				Status += 1;
-			}
-		}
-	}
-	if(CountPress == 7){
-		if(ButtonMatrixState==4096){
-			if(HAL_GetTick() - delay >= 1000){
-				CountPress +=1;
-				Status += 1;
-			}
-		}
-	}
-	if(CountPress == 8){
-		if(ButtonMatrixState==4096){
-			if(HAL_GetTick() - delay >= 1000){
-				CountPress +=1;
-				Status += 1;
-			}
-		}
-	}
 
-}
 /* USER CODE END 4 */
 
 /**
