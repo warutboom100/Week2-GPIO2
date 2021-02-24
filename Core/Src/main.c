@@ -313,118 +313,89 @@ void ButtonMatrixUpdate()
 
 void CheckIDStudent ()
 {
-	if(ButtonMatrixState == 8){
-		HAL_GPIO_WritePin(GPIOB, GPIO_PIN_10, GPIO_PIN_RESET);
+	if (ButtonMatrixState == 8){
 		Count_MY_ID = 1;
 		Status = 2;
+
 	}
 	switch(Count_MY_ID){
-		Count_MY_ID += 1;
 		case 1:
 			if(ButtonMatrixState == 64){ // press 6
 				HAL_GPIO_WritePin(GPIOA, GPIO_PIN_6, GPIO_PIN_SET);
+				Count_MY_ID += 1;
 				break;
 			}
-			else{
-				Count_MY_ID = 1;
+			if((ButtonMatrixState != 64)&&(ButtonMatrixState != 0)){
+				Count_MY_ID += 12;
 				break;
 			}
 		case 2:
-			if(ButtonMatrixState == 512){ // press 2
+			if((ButtonMatrixState == 512)&&(ButtonMatrixState!=0)){ // press 2
 				HAL_GPIO_WritePin(GPIOA, GPIO_PIN_6, GPIO_PIN_SET);
-				break;
-			}
-			else{
-				Count_MY_ID = 1;
+				Count_MY_ID += 1;
 				break;
 			}
 		case 3:
-			if(ButtonMatrixState == 1024){ //press 3
+			if((ButtonMatrixState == 1024)&&(ButtonMatrixState!=0)){ //press 3
 				HAL_GPIO_WritePin(GPIOA, GPIO_PIN_6, GPIO_PIN_SET);
-				break;
-			}
-			else{
-				Count_MY_ID = 1;
+				Count_MY_ID += 1;
 				break;
 			}
 		case 4:
-			if(ButtonMatrixState == 16){ // press 4
+			if((ButtonMatrixState == 16)&&(ButtonMatrixState!=0)){ // press 4
 				HAL_GPIO_WritePin(GPIOA, GPIO_PIN_6, GPIO_PIN_SET);
-				break;
-			}
-			else{
-				Count_MY_ID = 1;
+				Count_MY_ID += 1;
 				break;
 			}
 		case 5:
-			if(ButtonMatrixState == 4096){ // press 0
+			if((ButtonMatrixState == 4096)&&(ButtonMatrixState!=0)){ // press 0
 				HAL_GPIO_WritePin(GPIOA, GPIO_PIN_6, GPIO_PIN_SET);
-				break;
-			}
-			else{
-				Count_MY_ID = 1;
+				Count_MY_ID += 1;
 				break;
 			}
 		case 6:
-			if(ButtonMatrixState == 32){ // press 5
+			if((ButtonMatrixState == 32)&&(ButtonMatrixState!=0)){ // press 5
 				HAL_GPIO_WritePin(GPIOA, GPIO_PIN_6, GPIO_PIN_SET);
-				break;
-			}
-			else{
-				Count_MY_ID = 1;
+				Count_MY_ID += 1;
 				break;
 			}
 		case 7:
-			if(ButtonMatrixState == 4096){ // press 0
+			if((ButtonMatrixState == 4096)&&(ButtonMatrixState!=0)){ // press 0
 				HAL_GPIO_WritePin(GPIOA, GPIO_PIN_6, GPIO_PIN_SET);
-				break;
-			}
-			else{
-				Count_MY_ID = 1;
+				Count_MY_ID += 1;
 				break;
 			}
 		case 8:
-			if(ButtonMatrixState == 4096){ // press 0
+			if((ButtonMatrixState )== 4096&&(ButtonMatrixState!=0)){ // press 0
 				HAL_GPIO_WritePin(GPIOA, GPIO_PIN_6, GPIO_PIN_SET);
+				Count_MY_ID += 1;
 				break;
 			}
 		case 9:
-			if(ButtonMatrixState == 4096){ // press 0
+			if((ButtonMatrixState == 4096)&&(ButtonMatrixState!=0)){ // press 0
 				HAL_GPIO_WritePin(GPIOA, GPIO_PIN_6, GPIO_PIN_SET);
-				break;
-			}
-			else{
-				Count_MY_ID = 1;
+				Count_MY_ID += 1;
 				break;
 			}
 		case 10:
-			if(ButtonMatrixState == 16){ // press 4
+			if((ButtonMatrixState == 16)&&(ButtonMatrixState!=0)){ // press 4
 				HAL_GPIO_WritePin(GPIOA, GPIO_PIN_6, GPIO_PIN_SET);
-				break;
-			}
-			else{
-				Count_MY_ID = 1;
+				Count_MY_ID += 1;
 				break;
 			}
 		case 11:
-			if(ButtonMatrixState == 1){ // press 7
+			if((ButtonMatrixState == 1)&&(ButtonMatrixState!=0)){ // press 7
 				HAL_GPIO_WritePin(GPIOA, GPIO_PIN_6, GPIO_PIN_SET);
+				Count_MY_ID += 1;
 				Status = 1;
 				break;
 			}
-			else{
-				Count_MY_ID = 1;
-				break;
-			}
 		case 12:
-			if((ButtonMatrixState == 32768) && Status == 1){ // press OK
+			if((ButtonMatrixState == 32768) && (Status == 1)){ // press OK
 				HAL_GPIO_WritePin(GPIOB, GPIO_PIN_10, GPIO_PIN_SET);
 				break;
 			}
-			else{
-				Count_MY_ID = 1;
-				break;
-			}
+
 	}
 
 }
