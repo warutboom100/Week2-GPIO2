@@ -46,6 +46,7 @@ UART_HandleTypeDef huart2;
 //save status of Button Matrix
 uint16_t ButtonMatrixState = 0;
 uint32_t ButtonMatrixTimestamp = 0;
+uint32_t delay = 0;
 int IdStudent[] = {64,512,1024,16,4096,32,4096,4096,4096,16,1}; //[6,2,3,4,0,5,0,0,0,4,7]
 int CountPress = 0;
 int Status = 1;
@@ -312,8 +313,8 @@ void ButtonMatrixUpdate()
 	}
 }
 
-void CheckIDStudent ()
-{	if(Status == 12&&ButtonMatrixState == 32768){
+void CheckIDStudent (){
+	if(Status == 12&&ButtonMatrixState == 32768){
 		HAL_GPIO_WritePin(GPIOB, GPIO_PIN_10, GPIO_PIN_SET);
 	}
 	if(6>CountPress||CountPress>8){
@@ -323,27 +324,35 @@ void CheckIDStudent ()
 				Status += 1;
 				break;
 			}
+			if((IdStudent[i]!=ButtonMatrixState)||(ButtonMatrixState!=0)){
+				CountPress += 13;
+				break;
+			}
 		}
 	}
-	switch(CountPress){
-		case 6:
-			if(ButtonMatrixState==4096&&Status==7){
-				CountPress += 1;
+	if(CountPress == 6){
+		if(ButtonMatrixState==4096){
+			if(HAL_GetTick() - delay >= 1000){
+				CountPress +=1;
 				Status += 1;
 			}
-			break;
-		case 7:
-			if(ButtonMatrixState==4096&&Status==8){
-				CountPress += 1;
+		}
+	}
+	if(CountPress == 7){
+		if(ButtonMatrixState==4096){
+			if(HAL_GetTick() - delay >= 1000){
+				CountPress +=1;
 				Status += 1;
 			}
-			break;
-		case 8:
-			if(ButtonMatrixState==4096&&Status==9){
-				CountPress += 1;
+		}
+	}
+	if(CountPress == 8){
+		if(ButtonMatrixState==4096){
+			if(HAL_GetTick() - delay >= 1000){
+				CountPress +=1;
 				Status += 1;
 			}
-			break;
+		}
 	}
 
 }
