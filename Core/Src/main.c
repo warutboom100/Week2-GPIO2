@@ -45,8 +45,9 @@ UART_HandleTypeDef huart2;
 /* USER CODE BEGIN PV */
 //save status of Button Matrix
 uint16_t ButtonMatrixState = 0;
-
 uint32_t ButtonMatrixTimestamp = 0;
+int Count_MY_ID = 1;
+int Status = 2;  //StatusLed
 /* USER CODE END PV */
 
 /* Private function prototypes -----------------------------------------------*/
@@ -55,6 +56,7 @@ static void MX_GPIO_Init(void);
 static void MX_USART2_UART_Init(void);
 /* USER CODE BEGIN PFP */
 void ButtonMatrixUpdate();
+void CheckIDStudent ();
 /* USER CODE END PFP */
 
 /* Private user code ---------------------------------------------------------*/
@@ -103,6 +105,9 @@ int main(void)
 
     /* USER CODE BEGIN 3 */
 	ButtonMatrixUpdate();
+	CheckIDStudent();
+
+
   }
   /* USER CODE END 3 */
 }
@@ -200,10 +205,13 @@ static void MX_GPIO_Init(void)
   __HAL_RCC_GPIOB_CLK_ENABLE();
 
   /*Configure GPIO pin Output Level */
-  HAL_GPIO_WritePin(LD2_GPIO_Port, LD2_Pin, GPIO_PIN_RESET);
+  HAL_GPIO_WritePin(GPIOA, LD2_Pin|GPIO_PIN_6, GPIO_PIN_RESET);
 
   /*Configure GPIO pin Output Level */
   HAL_GPIO_WritePin(GPIOA, GPIO_PIN_7|GPIO_PIN_9, GPIO_PIN_SET);
+
+  /*Configure GPIO pin Output Level */
+  HAL_GPIO_WritePin(GPIOB, GPIO_PIN_10, GPIO_PIN_RESET);
 
   /*Configure GPIO pin Output Level */
   HAL_GPIO_WritePin(GPIOC, GPIO_PIN_7, GPIO_PIN_SET);
@@ -217,12 +225,12 @@ static void MX_GPIO_Init(void)
   GPIO_InitStruct.Pull = GPIO_NOPULL;
   HAL_GPIO_Init(B1_GPIO_Port, &GPIO_InitStruct);
 
-  /*Configure GPIO pin : LD2_Pin */
-  GPIO_InitStruct.Pin = LD2_Pin;
+  /*Configure GPIO pins : LD2_Pin PA6 */
+  GPIO_InitStruct.Pin = LD2_Pin|GPIO_PIN_6;
   GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_PP;
   GPIO_InitStruct.Pull = GPIO_NOPULL;
   GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
-  HAL_GPIO_Init(LD2_GPIO_Port, &GPIO_InitStruct);
+  HAL_GPIO_Init(GPIOA, &GPIO_InitStruct);
 
   /*Configure GPIO pins : PA7 PA9 */
   GPIO_InitStruct.Pin = GPIO_PIN_7|GPIO_PIN_9;
@@ -230,6 +238,13 @@ static void MX_GPIO_Init(void)
   GPIO_InitStruct.Pull = GPIO_NOPULL;
   GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
   HAL_GPIO_Init(GPIOA, &GPIO_InitStruct);
+
+  /*Configure GPIO pin : PB10 */
+  GPIO_InitStruct.Pin = GPIO_PIN_10;
+  GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_PP;
+  GPIO_InitStruct.Pull = GPIO_NOPULL;
+  GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
+  HAL_GPIO_Init(GPIOB, &GPIO_InitStruct);
 
   /*Configure GPIO pin : PC7 */
   GPIO_InitStruct.Pin = GPIO_PIN_7;
@@ -270,10 +285,13 @@ uint16_t ButtonMatrixLine = 0;
 
 void ButtonMatrixUpdate()
 {
-	if(HAL_GetTick() - ButtonMatrixTimestamp >= 100){
+	if(HAL_GetTick() - ButtonMatrixTimestamp >= 100)
+	{
+		HAL_GPIO_WritePin(GPIOA, GPIO_PIN_6, GPIO_PIN_RESET);
 		ButtonMatrixTimestamp = HAL_GetTick();
 		int i;
-		for(i = 0;i<4;++i){ //Scan Button 0-3
+		for(i = 0;i<4;++i)
+		{ //Scan Button 0-3
 			GPIO_PinState Pinstate = HAL_GPIO_ReadPin(ButtonmatrixPort[i], ButtonMatrixPin[i]);
 			if(Pinstate == GPIO_PIN_RESET){ // Button Press
 				ButtonMatrixState |= (uint16_t)0x1 << (i + ButtonMatrixLine * 4);
@@ -291,6 +309,124 @@ void ButtonMatrixUpdate()
 		HAL_GPIO_WritePin(ButtonmatrixPort[NextOutputPin], ButtonMatrixPin[NextOutputPin], GPIO_PIN_RESET);
 
 	}
+}
+
+void CheckIDStudent ()
+{
+	if(ButtonMatrixState == 8){
+		HAL_GPIO_WritePin(GPIOB, GPIO_PIN_10, GPIO_PIN_RESET);
+		Count_MY_ID = 1;
+		Status = 2;
+	}
+	switch(Count_MY_ID){
+		Count_MY_ID += 1;
+		case 1:
+			if(ButtonMatrixState == 64){ // press 6
+				HAL_GPIO_WritePin(GPIOA, GPIO_PIN_6, GPIO_PIN_SET);
+				break;
+			}
+			else{
+				Count_MY_ID = 1;
+				break;
+			}
+		case 2:
+			if(ButtonMatrixState == 512){ // press 2
+				HAL_GPIO_WritePin(GPIOA, GPIO_PIN_6, GPIO_PIN_SET);
+				break;
+			}
+			else{
+				Count_MY_ID = 1;
+				break;
+			}
+		case 3:
+			if(ButtonMatrixState == 1024){ //press 3
+				HAL_GPIO_WritePin(GPIOA, GPIO_PIN_6, GPIO_PIN_SET);
+				break;
+			}
+			else{
+				Count_MY_ID = 1;
+				break;
+			}
+		case 4:
+			if(ButtonMatrixState == 16){ // press 4
+				HAL_GPIO_WritePin(GPIOA, GPIO_PIN_6, GPIO_PIN_SET);
+				break;
+			}
+			else{
+				Count_MY_ID = 1;
+				break;
+			}
+		case 5:
+			if(ButtonMatrixState == 4096){ // press 0
+				HAL_GPIO_WritePin(GPIOA, GPIO_PIN_6, GPIO_PIN_SET);
+				break;
+			}
+			else{
+				Count_MY_ID = 1;
+				break;
+			}
+		case 6:
+			if(ButtonMatrixState == 32){ // press 5
+				HAL_GPIO_WritePin(GPIOA, GPIO_PIN_6, GPIO_PIN_SET);
+				break;
+			}
+			else{
+				Count_MY_ID = 1;
+				break;
+			}
+		case 7:
+			if(ButtonMatrixState == 4096){ // press 0
+				HAL_GPIO_WritePin(GPIOA, GPIO_PIN_6, GPIO_PIN_SET);
+				break;
+			}
+			else{
+				Count_MY_ID = 1;
+				break;
+			}
+		case 8:
+			if(ButtonMatrixState == 4096){ // press 0
+				HAL_GPIO_WritePin(GPIOA, GPIO_PIN_6, GPIO_PIN_SET);
+				break;
+			}
+		case 9:
+			if(ButtonMatrixState == 4096){ // press 0
+				HAL_GPIO_WritePin(GPIOA, GPIO_PIN_6, GPIO_PIN_SET);
+				break;
+			}
+			else{
+				Count_MY_ID = 1;
+				break;
+			}
+		case 10:
+			if(ButtonMatrixState == 16){ // press 4
+				HAL_GPIO_WritePin(GPIOA, GPIO_PIN_6, GPIO_PIN_SET);
+				break;
+			}
+			else{
+				Count_MY_ID = 1;
+				break;
+			}
+		case 11:
+			if(ButtonMatrixState == 1){ // press 7
+				HAL_GPIO_WritePin(GPIOA, GPIO_PIN_6, GPIO_PIN_SET);
+				Status = 1;
+				break;
+			}
+			else{
+				Count_MY_ID = 1;
+				break;
+			}
+		case 12:
+			if((ButtonMatrixState == 32768) && Status == 1){ // press OK
+				HAL_GPIO_WritePin(GPIOB, GPIO_PIN_10, GPIO_PIN_SET);
+				break;
+			}
+			else{
+				Count_MY_ID = 1;
+				break;
+			}
+	}
+
 }
 /* USER CODE END 4 */
 
